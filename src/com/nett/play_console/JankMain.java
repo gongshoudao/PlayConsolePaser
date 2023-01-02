@@ -11,6 +11,14 @@ import java.io.IOException;
 import java.net.URL;
 
 public class JankMain {
+    /**
+     * 全部会话
+     */
+    public static final String ALL_SESSIONS = "15";
+    /**
+     * 仅受影响的会话
+     */
+    public static final String ONLY_AFFECTED_SESSIONS = "13";
     private static final Gson gson = new Gson();
 
     public static void main(String[] args) {
@@ -35,14 +43,16 @@ public class JankMain {
             System.err.println("未指定文件，解析默认路径");
         } else if (jsonFile.exists()) {
             System.out.println("-------解析：" + jsonFile + "--------");
-            parseJsonFile(jsonFile);
+            parseJsonFile(jsonFile, ALL_SESSIONS);
             System.out.println("----------------------");
             return;
         }
         System.out.println("----------------------");
         parseFromRes(7);
+        parseFromRes(30);
+        parseFromRes(90);
 
-        System.out.println("-------30天数据--------");
+        /*System.out.println("-------30天数据--------");
         jsonFile = new File("res/test-30day.json");
         if (jsonFile.exists()) {
             parseJsonFile(jsonFile);
@@ -57,7 +67,7 @@ public class JankMain {
             parseJsonFile(jsonFile);
         } else {
             System.out.println("90天数据不存在");
-        }
+        }*/
         System.out.println("----------------------");
     }
 
@@ -74,7 +84,7 @@ public class JankMain {
             }
             jsonFile = new File(resource.getPath());
             if (jsonFile.exists()) {
-                parseJsonFile(jsonFile);
+                parseJsonFile(jsonFile, ALL_SESSIONS);
             } else {
                 System.out.println(nDay + "天数据不存在");
             }
@@ -85,7 +95,7 @@ public class JankMain {
         }
     }
 
-    private static void parseJsonFile(File file) {
+    private static void parseJsonFile(File file, String dateset) {
         JsonReader jsonReader = null;
         try {
             jsonReader = new JsonReader(new FileReader(file));
@@ -94,7 +104,7 @@ public class JankMain {
             while (jsonReader.hasNext()) {
                 String nextName = jsonReader.nextName();
                 JsonToken peek = jsonReader.peek();
-                if (peek == JsonToken.BEGIN_OBJECT && "13".equals(nextName)) {
+                if (peek == JsonToken.BEGIN_OBJECT && dateset.equals(nextName)) {
                     jsonReader.beginObject();
                     String _13Name = jsonReader.nextName();
                     JsonToken _13token = jsonReader.peek();
